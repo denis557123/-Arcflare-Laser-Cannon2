@@ -1,0 +1,35 @@
+name: Build Arcflare Laser Cannon
+
+on:
+  push:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Unpack mod
+        run: unzip -q -o ArcflareLaserCannon-1.1.0-GitHubActions.zip
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '9.2.1'
+
+      - name: Compile mod
+        run: gradle clean build --stacktrace --no-daemon
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Arcflare-JAR
+          path: build/libs/lasercannon-*.jar
+          if-no-files-found: error
